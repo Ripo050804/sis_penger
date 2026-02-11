@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pencatatan Pengeluaran</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        h1 {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 0.95em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        /* Dashboard Grid - Responsive */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-title {
+            font-size: 1.3em;
+            color: #333;
+            font-weight: 600;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background: #fafafa;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Stats Grid */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 12px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 1.6em;
+            font-weight: 700;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        @media (max-width: 480px) {
+            .stat-value {
+                font-size: 1.4em;
+            }
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        /* Expenses List */
+        .expenses-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        @media (max-width: 480px) {
+            .expenses-list {
+                max-height: 350px;
+            }
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 10px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+            gap: 10px;
+        }
+
+        .expense-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .expense-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .expense-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            font-size: 0.95em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .expense-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.8em;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .expense-amount {
+            font-weight: 700;
+            color: #e74c3c;
+            font-size: 1em;
+            white-space: nowrap;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        @media (max-width: 480px) {
+            .expense-amount {
+                font-size: 0.9em;
+                min-width: 70px;
+            }
+        }
+
+        .expense-category {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .category-food { background: #ff6b6b; color: white; }
+        .category-transport { background: #4ecdc4; color: white; }
+        .category-shopping { background: #45b7d1; color: white; }
+        .category-entertainment { background: #96ceb4; color: white; }
+        .category-other { background: #ffeaa7; color: #333; }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 15px;
+            color: #999;
+        }
+
+        .empty-state p {
+            margin-top: 8px;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .no-expenses-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            opacity: 0.6;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+
+        .filters::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-1px);
+        }
+
+        /* Delete Button */
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 480px) {
+            .delete-btn {
+                padding: 7px 10px;
+                font-size: 0.8em;
+            }
+        }
+
+        /* Summary Section */
+        .summary {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .summary-title {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9em;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-total {
+            font-weight: 700;
+            color: #e74c3c;
+            font-size: 1em;
+        }
+
+        .no-expenses {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        /* Scrollbar Styling */
+        .expenses-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .expenses-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .expenses-list::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .expenses-list::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        /* Bottom Navigation for Mobile */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 12px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .bottom-nav {
+                display: flex;
+                justify-content: space-around;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filters {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .expense-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .expense-meta {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .expense-amount {
+                width: 100%;
+                text-align: left;
+                margin-top: 5px;
+            }
+        }
+
+        /* Floating Action Button for Mobile */
+        .fab {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            font-size: 2em;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .fab {
+                display: block;
+            }
+        }
+
+        /* Modal for Mobile Form */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #666;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .close-modal:hover {
+            background: #f0f0f0;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .btn {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .expense-name {
+                font-size: 0.9em;
+            }
+
+            .stat-card {
+                padding: 15px 10px;
+            }
+
+            .stat-value {
+                font-size: 1.3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 Catatan Pengeluaran</h1>
+            <p class="subtitle">Kelola keuangan harian Anda dengan mudah</p>
+        </header>
+
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Tambah Pengeluaran</h2>
+                </div>
+                <form id="expenseForm">
+                    <div class="form-group">
+                        <label for="expenseName">Nama Pengeluaran</label>
+                        <input type="text" id="expenseName" placeholder="Contoh: Makan Siang" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseAmount">Jumlah (Rp)</label>
+                        <input type="number" id="expenseAmount" placeholder="Masukkan jumlah" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseCategory">Kategori</label>
+                        <select id="expenseCategory" required>
+                            <option value="">Pilih Kategori</option>
+                            <option value="food">Makanan & Minuman</option>
+                            <option value="transport">Transportasi</option>
+                            <option value="shopping">Belanja</option>
+                            <option value="entertainment">Hiburan</option>
+                            <option value="other">Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseDate">Tanggal</label>
+                        <input type="date" id="expenseDate" required>
+                    </div>
+                    <button type="submit" class="btn">➕ Tambah Pengeluaran</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Statistik</h2>
+                </div>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalExpenses">Rp 0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="expenseCount">0</div>
+                        <div class="stat-label">Transaksi</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgExpense">Rp 0</div>
+                        <div class="stat-label">Rata-rata</div>
+                    </div>
+                </div>
+
+                <div class="summary">
+                    <h3 class="summary-title">Ringkasan Kategori</h3>
+                    <div id="categorySummary">
+                        <p class="no-expenses">Belum ada pengeluaran</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Daftar Pengeluaran</h2>
+                <div class="filters">
+                    <button class="filter-btn active" data-filter="all">Semua</button>
+                    <button class="filter-btn" data-filter="food">🍔 Makanan</button>
+                    <button class="filter-btn" data-filter="transport">🚗 Transport</button>
+                    <button class="filter-btn" data-filter="shopping">🛍️ Belanja</button>
+                    <button class="filter-btn" data-filter="entertainment">🎬 Hiburan</button>
+                    <button class="filter-btn" data-filter="other">📄 Lainnya</button>
+                </div>
+            </div>
+            <div class="expenses-list" id="expensesList">
+                <div class="empty-state">
+                    <div class="no-expenses-icon">📝</div>
+                    <p>Belum ada pengeluaran</p>
+                    <p>Tambahkan pengeluaran pertama Anda!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button for Mobile -->
+    <button class="fab" id="fabBtn">+</button>
+
+    <!-- Modal for Mobile Form -->
+    <div class="modal" id="addExpenseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="color: #333; font-size: 1.3em;">Tambah Pengeluaran</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <form id="modalExpenseForm">
+                <div class="form-group">
+                    <label for="modalExpenseName">Nama Pengeluaran</label>
+                    <input type="text" id="modalExpenseName" placeholder="Contoh: Makan Siang" required>
+                </div>
+                <div class="form-group">
+                    <label for="modalExpenseAmount">Jumlah (Rp)</label>
+                    <input type="number" id="modalExpenseAmount" placeholder="Masukkan jumlah" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="modalExpenseCategory">Kategori</label>
+                    <select id="modalExpenseCategory" required>
+                        <option value="">Pilih Kategori</option>
+                        <option value="food">Makanan & Minuman</option>
+                        <option value="transport">Transportasi</option>
+                        <option value="shopping">Belanja</option>
+                        <option value="entertainment">Hiburan</option>
+                        <option value="other">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="modalExpenseDate">Tanggal</label>
+                    <input type="date" id="modalExpenseDate" required>
+                </div>
+                <button type="submit" class="btn">Tambah Pengeluaran</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data pengeluaran
+        let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+        
+        // DOM Elements
+        const expenseForm = document.getElementById('expenseForm');
+        const expenseName = document.getElementById('expenseName');
+        const expenseAmount = document.getElementById('expenseAmount');
+        const expenseCategory = document.getElementById('expenseCategory');
+        const expenseDate = document.getElementById('expenseDate');
+        const expensesList = document.getElementById('expensesList');
+        const totalExpenses = document.getElementById('totalExpenses');
+        const expenseCount = document.getElementById('expenseCount');
+        const avgExpense = document.getElementById('avgExpense');
+        const categorySummary = document.getElementById('categorySummary');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const fabBtn = document.getElementById('fabBtn');
+        const addExpenseModal = document.getElementById('addExpenseModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalExpenseForm = document.getElementById('modalExpenseForm');
+
+        // Set default date to today
+        const today = new Date().toISOString().split('T')[0];
+        expenseDate.value = today;
+        document.getElementById('modalExpenseDate').value = today;
+
+        // Format currency
+        function formatCurrency(amount) {
+            return 'Rp ' + amount.toLocaleString('id-ID');
+        }
+
+        // Add expense
+        function addExpense(name, amount, category, date) {
+            if (!name || !amount || !category || !date) {
+                alert('Semua field harus diisi!');
+                return;
+            }
+            
+            const newExpense = {
+                id: Date.now(),
+                name,
+                amount: parseInt(amount),
+                category,
+                date,
+                timestamp: new Date().getTime()
+            };
+            
+            expenses.push(newExpense);
+            saveExpenses();
+            renderExpenses();
+            renderStats();
+            renderCategorySummary();
+        }
+
+        // Form submit handler
+        expenseForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            addExpense(
+                expenseName.value.trim(),
+                expenseAmount.value,
+                expenseCategory.value,
+                expenseDate.value
+            );
+            expenseForm.reset();
+            expenseDate.value = today;
+        });
+
+        // Modal form submit handler
+        modalExpenseForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            addExpense(
+                document.getElementById('modalExpenseName').value.trim(),
+                document.getElementById('modalExpenseAmount').value,
+                document.getElementById('modalExpenseCategory').value,
+                document.getElementById('modalExpenseDate').value
+            );
+            modalExpenseForm.reset();
+            document.getElementById('modalExpenseDate').value = today;
+            addExpenseModal.style.display = 'none';
+        });
+
+        // Save to localStorage
+        function saveExpenses() {
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+        }
+
+        // Delete expense
+        function deleteExpense(id) {
+            if (confirm('Hapus pengeluaran ini?')) {
+                expenses = expenses.filter(expense => expense.id !== id);
+                saveExpenses();
+                renderExpenses();
+                renderStats();
+                renderCategorySummary();
+            }
+        }
+
+        // Render expenses list
+        function renderExpenses(filter = 'all') {
+            if (expenses.length === 0) {
+                expensesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="no-expenses-icon">📝</div>
+                        <p>Belum ada pengeluaran</p>
+                        <p>Tambahkan pengeluaran pertama Anda!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let filteredExpenses = expenses;
+            if (filter !== 'all') {
+                filteredExpenses = expenses.filter(exp => exp.category === filter);
+            }
+            
+            if (filteredExpenses.length === 0) {
+                expensesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="no-expenses-icon">🔍</div>
+                        <p>Tidak ada pengeluaran untuk kategori ini</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by timestamp (newest first)
+            filteredExpenses.sort((a, b) => b.timestamp - a.timestamp);
+            
+            expensesList.innerHTML = filteredExpenses.map(expense => {
+                const categoryClass = {
+                    'food': 'category-food',
+                    'transport': 'category-transport',
+                    'shopping': 'category-shopping',
+                    'entertainment': 'category-entertainment',
+                    'other': 'category-other'
+                }[expense.category];
+                
+                const categoryName = {
+                    'food': 'Makanan',
+                    'transport': 'Transportasi',
+                    'shopping': 'Belanja',
+                    'entertainment': 'Hiburan',
+                    'other': 'Lainnya'
+                }[expense.category];
+                
+                // Format date
+                const dateObj = new Date(expense.date);
+                const formattedDate = dateObj.toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short'
+                });
+                
+                return `
+                    <div class="expense-item">
+                        <div class="expense-info">
+                            <div class="expense-name">${expense.name}</div>
+                            <div class="expense-meta">
+                                <span>${formattedDate}</span>
+                                <span class="expense-category ${categoryClass}">${categoryName}</span>
+                            </div>
+                        </div>
+                        <div class="expense-amount">${formatCurrency(expense.amount)}</div>
+                        <button class="delete-btn" onclick="deleteExpense(${expense.id})">🗑️ Hapus</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render statistics
+        function renderStats() {
+            const total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const count = expenses.length;
+            const average = count > 0 ? Math.round(total / count) : 0;
+            
+            totalExpenses.textContent = formatCurrency(total);
+            expenseCount.textContent = count;
+            avgExpense.textContent = formatCurrency(average);
+        }
+
+        // Render category summary
+        function renderCategorySummary() {
+            if (expenses.length === 0) {
+                categorySummary.innerHTML = '<p class="no-expenses">Belum ada pengeluaran</p>';
+                return;
+            }
+            
+            const categories = {
+                food: { name: 'Makanan & Minuman', total: 0, count: 0 },
+                transport: { name: 'Transportasi', total: 0, count: 0 },
+                shopping: { name: 'Belanja', total: 0, count: 0 },
+                entertainment: { name: 'Hiburan', total: 0, count: 0 },
+                other: { name: 'Lainnya', total: 0, count: 0 }
+            };
+            
+            expenses.forEach(exp => {
+                categories[exp.category].total += exp.amount;
+                categories[exp.category].count++;
+            });
+            
+            let html = '';
+            Object.entries(categories).forEach(([key, data]) => {
+                if (data.count > 0) {
+                    html += `
+                        <div class="summary-item">
+                            <span>${data.name} (${data.count})</span>
+                            <span class="summary-total">${formatCurrency(data.total)}</span>
+                        </div>
+                    `;
+                }
+            });
+            
+            categorySummary.innerHTML = html;
+        }
+
+        // Filter functionality
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const filter = this.getAttribute('data-filter');
+                renderExpenses(filter);
+            });
+        });
+
+        // FAB Button - Show modal on mobile
+        fabBtn.addEventListener('click', function() {
+            addExpenseModal.style.display = 'flex';
+        });
+
+        // Close modal
+        closeModal.addEventListener('click', function() {
+            addExpenseModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target === addExpenseModal) {
+                addExpenseModal.style.display = 'none';
+            }
+        });
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                addExpenseModal.style.display = 'none';
+            }
+        });
+
+        // Initial render
+        renderExpenses();
+        renderStats();
+        renderCategorySummary();
+
+        // Make deleteExpense accessible globally
+        window.deleteExpense = deleteExpense;
+    </script>
+</body>
+</html>
