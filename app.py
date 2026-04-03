@@ -38,13 +38,13 @@ DESKRIPSI_KELAS = {
     "dakon": "Dakon adalah batu berlubang-lubang yang menyerupai papan permainan congkak. Diduga digunakan untuk ritual atau permainan tradisional.",
     "batu_datar": "Batu datar adalah batu besar berbentuk lempengan yang mungkin digunakan sebagai alas atau tempat duduk dalam upacara adat.",
     "Kubur_batu": "Kubur batu adalah peti mati yang terbuat dari batu, digunakan untuk mengubur mayat pada masa megalitik. Biasanya ditemukan di dalam tanah.",
-    "monolit": "Monolit adalah batu tunggal berukuran besar yang didirikan sebagai monumen atau tanda suatu peristiwa penting."
+    "Lesung_batu": "Lesung batu adalah batu berlubang yang digunakan sebagai wadah untuk menumbuk atau menghaluskan bahan makanan pada masa megalitikum."
 }
 
 # ==============================================
 # KONFIGURASI GOOGLE DRIVE
 # ==============================================
-FILE_ID = "1anqwxu65GSw2iQr9ISdHUBgh9D3H2uGt"  # FILE_ID Anda
+FILE_ID = "185Lo6wOmi7zL47xyEZ060_FFmHF_9SwF"  # FILE_ID Anda
 
 # ==============================================
 # FUNGSI DOWNLOAD MODEL DARI GOOGLE DRIVE
