@@ -1,0 +1,100 @@
+{
+  "timestamp": "20260319_073528",
+  "model_name": "Megalitikum Classifier",
+  "model_architecture": "ResNet50 + Transfer Learning",
+  "input_size": [
+    224,
+    224,
+    3
+  ],
+  "num_classes": 7,
+  "class_names": [
+    "Arca",
+    "dolmen",
+    "menhir",
+    "dakon",
+    "batu_datar",
+    "Kubur_batu",
+    "Lesung_batu"
+  ],
+  "total_samples": 2072,
+  "train_samples": 1325,
+  "val_samples": 332,
+  "test_samples": 415,
+  "learning_rate_phase1": 0.0001,
+  "learning_rate_phase2": 2e-05,
+  "batch_size": 16,
+  "label_smoothing": 0.15,
+  "epochs_phase1": 60,
+  "epochs_phase2": 50,
+  "best_val_accuracy_phase1": 0.990963876247406,
+  "best_val_accuracy_phase2": 0.9939758777618408,
+  "test_accuracy": 0.9734939932823181,
+  "test_loss": 0.7563996911048889,
+  "test_auc": 0.9989650845527649,
+  "confusion_matrix": [
+    [
+      56,
+      0,
+      0,
+      0,
+      1,
+      0,
+      2
+    ],
+    [
+      0,
+      59,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      59,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      1,
+      56,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      59,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      58,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      57
+    ]
+  ]
+}
